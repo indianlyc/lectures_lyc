@@ -1,5 +1,5 @@
 from ventil import Xor, And, WireOut, Or
-
+import numpy as np
 
 class HalfAdder(And):
     def __init__(self):
@@ -87,3 +87,51 @@ class BinaryAdder:
     def set_out(self, out1, out2):
         self._out1 = out1
         self._out2 = out2
+
+
+class BinaryAdder8:
+    def __init__(self):
+        self._n = 8
+        # входы A и B
+        self._a_in = []
+        self._b_in = []
+        self._ci_in = None
+        # сумматоры
+        self._ba = []
+        #  провода к которым подсоединим лампочки
+        self._wire_out = []
+        # провод от выхода для переноса
+        self._wire_move = WireOut()
+
+        self._s_out = []
+        self._co_out = None
+
+
+        for i in range(self._n):
+            self._s_out.append(None)
+            self._a_in.append(None)
+            self._b_in.append(None)
+            self._ba.append(BinaryAdder())
+            self._wire_out.append(WireOut())
+
+        for i in range(self._n-1):
+            self._ba[i].set_out(self._wire_out[i].in1, self._ba[i+1].in3)
+
+        self._ba[self._n - 1].set_out(self._wire_out[self._n - 1].in1, self._wire_move.in1)
+
+    def __getattr__(self, attr):
+        # attr = "in_a0"
+        # i = 0, s = a
+        i = int(attr[4:])
+        s = attr[3]
+        def wrap(self, value):
+            return self._in_summary(i, value)
+        return wrap
+
+    def _in_summary(self, i, value):
+        self._a[i] = value
+        if np.all(self._a) is not None:
+            outs = self._result()
+            for i, el in enumerate(outs):
+                self._out[i](el)
+            self._set_none()
