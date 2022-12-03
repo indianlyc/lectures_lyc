@@ -23,6 +23,7 @@ class HalfAdder(And):
 
         self._xor.set_out(self._wire1.in1)
         self._and.set_out(self._wire2.in1)
+
     def _result(self):
         self._xor.in1(self._in1)
         self._and.in1(self._in1)
