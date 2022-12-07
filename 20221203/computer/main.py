@@ -1,6 +1,7 @@
 from ventil import And, Or, Not, WireIn, Lamp, Xor
 from adder import HalfAdder, BinaryAdder
 
+
 if __name__ == '__main__':
     # lamp = Lamp()
     # wire1 = WireIn()

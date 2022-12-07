@@ -1,6 +1,7 @@
 from ventil import Xor, And, WireOut, Or
 import numpy as np
 
+
 class HalfAdder(And):
     def __init__(self):
         self._in1 = None
@@ -70,7 +71,7 @@ class BinaryAdder:
 
     def in1(self, value):
         self._in1 = value
-        if self._in2 is not None:
+        if self._in2 is not None and self._in3 is not None:
             out1, out2 = self._result()
             self._out1(out1)
             self._out2(out2)
@@ -78,7 +79,15 @@ class BinaryAdder:
 
     def in2(self, value):
         self._in2 = value
-        if self._in1 is not None:
+        if self._in1 is not None and self._in3 is not None:
+            out1, out2 = self._result()
+            self._out1(out1)
+            self._out2(out2)
+            self._set_none()
+
+    def in3(self, value):
+        self._in3 = value
+        if self._in1 is not None and self._in2 is not None:
             out1, out2 = self._result()
             self._out1(out1)
             self._out2(out2)
