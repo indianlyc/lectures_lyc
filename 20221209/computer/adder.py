@@ -140,7 +140,6 @@ class BinaryAdder8:
         self._out_s = []
         self._out_co = None
 
-
         for i in range(self._n):
             self._out_s.append(None)
             self._in_a.append(None)
@@ -159,24 +158,60 @@ class BinaryAdder8:
         self._in_b = []
         self._in_ci = None
 
-    def set_out(self, out1, out2):
-        self._out_s = out1
-        self._out_co = out2
+    def set_out(self, out1, *out2):
+        self._out_co = out1
+        self._out_s = out2
 
+    def _result(self):
+        for i in range(self._n):
+            self._ba[i].in_a(self._in_a[i])
+            self._ba[i].in_b(self._in_b[i])
+        self._ba[0].in_ci(self._in_ci)
+        res = [self._wire_co.get_signal()]
+        for i in range(self._n):
+            res.append(self._wire_out[i].get_signal())
+        return res
 
     def __getattr__(self, attr):
-        # attr = "in_a0"
+        # attr = "in_a0" or "in_b0" or "in_ci"
         # i = 0, s = a
-        i = int(attr[4:])
-        s = attr[3]
-        def wrap(self, value):
-            return self._in_summary(i, value)
-        return wrap
+        # print("__getattr__ run", attr, len(attr), attr[:3])
+        if len(attr) > 4 and (attr[:4] == "in_a" \
+                              or attr[:4] == "in_b" \
+                              or attr == "in_ci"):
 
-    def _in_summary(self, i, value):
-        self._a[i] = value
-        if np.all(self._a) is not None:
-            outs = self._result()
-            for i, el in enumerate(outs):
-                self._out[i](el)
+            if attr != "in_ci":
+                i = int(attr[4:])
+                s = attr[3]
+            else:
+                i = 0
+                s = "c"
+            def wrap(value):
+                return self._in_summary(i, s, value)
+            return wrap
+
+    def _in_summary(self, i, s, value):
+        if s == "c":
+            self._in_ci = value
+        elif s == "a":
+            self._in_a[i] = value
+        else:
+            self._in_b[i] = value
+
+        if np.all(self._in_a) is not None \
+                and np.all(self._in_b) is not None \
+                and self._in_ci is not None:
+            out_co, *out_s = self._result()
+
+            for i, el in enumerate(out_s):
+                self._out_s[i](el)
+            self._out_co(out_co)
             self._set_none()
+
+    def in_a(self, a:list) -> None:
+        for i in range(self._n):
+            getattr(self, "in_a" + str(i))(a[self._n - i - 1])
+
+    def in_b(self, b:list) -> None:
+        for i in range(self._n):
+            getattr(self, "in_b" + str(i))(b[self._n - i - 1])
