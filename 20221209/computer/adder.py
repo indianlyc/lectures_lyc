@@ -154,8 +154,8 @@ class BinaryAdder8:
 
     def _set_none(self):
         # входы A и B
-        self._in_a = []
-        self._in_b = []
+        self._in_a = [None] * self._n
+        self._in_b = [None] * self._n
         self._in_ci = None
 
     def set_out(self, out1, *out2):
@@ -211,6 +211,7 @@ class BinaryAdder8:
     def in_a(self, a:list) -> None:
         for i in range(self._n):
             getattr(self, "in_a" + str(i))(a[self._n - i - 1])
+            # self.in_a0(a[i])
 
     def in_b(self, b:list) -> None:
         for i in range(self._n):
