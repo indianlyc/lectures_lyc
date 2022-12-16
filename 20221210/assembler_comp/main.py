@@ -26,6 +26,7 @@ class Computer:
         self.__sub = 0  # признак вычитания
         self.p = 0  # выход для переноса
         self.transfer = 0  # складывать с переносом или вычитать с заимствованием
+        self.is_sum = False
 
     @property
     def a(self):
@@ -40,7 +41,9 @@ class Computer:
         # print(value)
         # print(value & int("100000000", 2))
         # print(((value & int("100000000", 2)) ^ self.__sub) >> 8)
-        self.p = ((value & int("100000000", 2)) ^ self.__sub) >> 8
+        if self.is_sum:
+            self.p = ((value & int("100000000", 2)) ^ self.__sub) >> 8
+            self.is_sum = False
         self.__a = value & int("11111111", 2)
         self.__sub = 0
 
@@ -68,6 +71,7 @@ class Computer:
         self.i += 2
 
     def _add(self):
+        self.is_sum = True
         addr = self._do_command()
         self.a += self.mem[addr]
         self.i += 2
