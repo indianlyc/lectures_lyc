@@ -14,7 +14,7 @@ d = {
     "34": "Перейти если не перенос",
     "40": "Сдвиг влево",
     "41": "Сдвиг вправо",
-    "-1": "Остановить",
+    "ff": "Остановить",
 }
 class Computer:
     def __init__(self, memory_size=65536):
@@ -37,7 +37,10 @@ class Computer:
         if self.transfer:
             value += self.p
             self.transfer = 0
-        self.p = value & int("100000000", 2) ^ self.__sub
+        # print(value)
+        # print(value & int("100000000", 2))
+        # print(((value & int("100000000", 2)) ^ self.__sub) >> 8)
+        self.p = ((value & int("100000000", 2)) ^ self.__sub) >> 8
         self.__a = value & int("11111111", 2)
         self.__sub = 0
 
@@ -77,7 +80,7 @@ class Computer:
         addr = self._do_command()
         val = ~self.mem[addr]
         self.__sub = 1
-        self.a += val
+        self.a += (val + 1)
         self.i += 2
 
     def jump(self):
