@@ -14,6 +14,10 @@ d = {
     "34": "Перейти если не перенос",
     "40": "Сдвиг влево",
     "41": "Сдвиг вправо",
+    "50": "not",
+    "51": "and",
+    "52": "or",
+    "53": "xor",
     "ff": "Остановить",
 }
 class Computer:
@@ -44,7 +48,7 @@ class Computer:
         # print(value)
         # print(value & int("100000000", 2))
         # print(((value & int("100000000", 2)) ^ self.__sub) >> 8)
-        if self.is_sum:
+        if self.is_sum or self.__sub:
             self.p = ((value & int("100000000", 2)) ^ self.__sub) >> 8
             self.is_sum = False
         self.__a = value & int("11111111", 2)
@@ -136,6 +140,26 @@ class Computer:
         self.transfer = 1
         self._sub()
 
+    def _not(self):
+        addr = self._do_command()
+        self.a = ~self.a
+        self.i += 2
+
+    def _and(self):
+        addr = self._do_command()
+        self.a &= self.mem[addr]
+        self.i += 2
+
+    def _or(self):
+        addr = self._do_command()
+        self.a |= self.mem[addr]
+        self.i += 2
+
+    def _xor(self):
+        addr = self._do_command()
+        self.a ^= self.mem[addr]
+        self.i += 2
+
     def _parse_addr(self, val):
         return int(val, 16)
 
@@ -192,6 +216,14 @@ class Computer:
                 self.left_shift()
             elif self.mem[self.i] == int("41", 16):
                 self.right_shift()
+            elif self.mem[self.i] == int("50", 16):
+                self._not()
+            elif self.mem[self.i] == int("51", 16):
+                self._and()
+            elif self.mem[self.i] == int("52", 16):
+                self._or()
+            elif self.mem[self.i] == int("53", 16):
+                self._xor()
             elif self.mem[self.i] == int("FF", 16):
                 self._index_use.add(self.i)
                 self._index_use.add(self.i+1)
