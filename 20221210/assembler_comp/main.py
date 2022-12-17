@@ -36,7 +36,10 @@ class Computer:
     @a.setter
     def a(self, value):
         if self.transfer:
-            value += self.p
+            if self.__sub:
+                value -= self.p
+            else:
+                value += self.p
             self.transfer = 0
         # print(value)
         # print(value & int("100000000", 2))
