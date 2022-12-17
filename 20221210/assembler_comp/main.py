@@ -174,6 +174,8 @@ class Computer:
                     comment = comment.strip()
                 else:
                     comment = ""
+                if len(line.strip()) == 0:
+                    continue
                 r = line.strip().split()
                 if len(r) == 2:
                     addr, data = r
