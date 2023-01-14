@@ -61,6 +61,9 @@ class DoubleLinkedList:
         # if self.finish is None:
         #     self.finish = 0
 
+        if self.len == 1:
+            self.start = len(self.memory_addr)
+            self.finish = len(self.memory_addr)
         node = Node(len(self.memory_obj) - 1, self.start, self.finish)
         self.memory_addr.append(node)
 
@@ -105,6 +108,8 @@ class DoubleLinkedList:
         self.len += 1
 
     def search(self, index):
+        if index >= self.len:
+            raise IndexError()
         link_now = self.start
         while link_now != self.finish and index > 0:
             link_now = self.memory_addr[link_now].link_next
@@ -112,6 +117,9 @@ class DoubleLinkedList:
         if index == 0:
             return link_now
         raise IndexError()
+
+    def geti(self, i):
+        return self.memory_obj[self.memory_addr[i].link_value]
 
 
 class Stack:
