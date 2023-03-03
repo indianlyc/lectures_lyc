@@ -27,6 +27,16 @@ def message(msg, color) -> None:
     screen.blit(msg, (W//2 - msg.get_width()//2, H//2 - msg.get_height()//2))  # отображаем изображение на экране
 
 
+def message_count_eat(msg) -> None:
+    """
+    Вывод текста в верхний левый угол экрана зеленым цветом
+    :param msg: текст
+    :return: None
+    """
+    msg = font_style.render(msg, True, GREEN)  # преобразуем текст в изображение текста
+    screen.blit(msg, (0, 0))  # отображаем изображение на экране
+
+
 def draw_snake(snake_list):
     """
     Отрисовка змеи
@@ -120,6 +130,9 @@ if __name__ == "__main__":
         if game_over:
             # рисуем в цетре экрана - вы проиграли
             message("Вы проиграли", GREEN)
+
+        # выводим сколько съели
+        message_count_eat(f"Съели: {length_snake-1}")
 
         # рисуем змею в текущих координатах ее частей
         draw_snake(snake_list)
