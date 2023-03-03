@@ -4,6 +4,8 @@ import random
 W, H = 800, 600  # ширина и высота окна
 FPS = 30  # количестко обработок в секунду (кадров)
 count_rock = 3 # количество камней
+snake_block = 10  # ширина змеи
+
 
 # цвета в rgb
 BLACK = (0, 0, 0)
@@ -11,12 +13,6 @@ WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 GRAY = (120, 120, 120)
-
-
-x0, y0 = W//2, H//2  # начальные положение головы змеи
-x0_change, y0_change = 0, 0  # начальные сдвиг змеи
-x0_change_old, y0_change_old = 0, 0  # предыдущий сдвиг змеи
-snake_block = 10  # ширина змеи
 
 
 def message(msg, color) -> None:
@@ -71,6 +67,7 @@ def generate_food():
     y = round(random.randrange(0, H - snake_block)/snake_block) * snake_block
     return x, y
 
+
 def generate_rock():
     """
     Генерируем координаты еды
@@ -81,16 +78,11 @@ def generate_rock():
     return x, y
 
 
-if __name__ == "__main__":
-    pygame.init()  # инициализируем модуль pygame
-
-    running = True  # истина пока продолжается игра
+def init_game():
     game_over = False  # проиграли или нет
-    screen = pygame.display.set_mode((W, H))  # получаем объект cодержимого окна с ширной W и высотой H
-
-    pygame.display.set_caption("Игра Змейка")  # устанавливаем у окна заголовок
-    clock = pygame.time.Clock()  # получаем объект "часы"
-    font_style = pygame.font.SysFont(None, 50)  # получаем объект стиль-текста
+    x0, y0 = W // 2, H // 2  # начальные положение головы змеи
+    x0_change, y0_change = 0, 0  # начальные сдвиг змеи
+    x0_change_old, y0_change_old = 0, 0  # предыдущий сдвиг змеи
 
     foodx, foody = generate_food()  # генерируем начальное положение еды
     rock_list = []  # список камней
@@ -99,6 +91,33 @@ if __name__ == "__main__":
 
     snake_list = []  # список частей змейки
     length_snake = 1  # какой длинны должна быть змейка
+    return (
+        game_over,
+        x0,
+        y0,
+        x0_change,
+        y0_change,
+        x0_change_old,
+        y0_change_old,
+        foodx,
+        foody,
+        rock_list,
+        snake_list,
+        length_snake,
+    )
+
+if __name__ == "__main__":
+    pygame.init()  # инициализируем модуль pygame
+
+    screen = pygame.display.set_mode((W, H))  # получаем объект cодержимого окна с ширной W и высотой H
+    pygame.display.set_caption("Игра Змейка")  # устанавливаем у окна заголовок
+    clock = pygame.time.Clock()  # получаем объект "часы"
+    font_style = pygame.font.SysFont(None, 50)  # получаем объект стиль-текста
+
+    running = True  # истина пока продолжается игра
+    game_over, x0, y0, x0_change, y0_change, x0_change_old, \
+            y0_change_old, foodx, foody, rock_list, \
+                snake_list, length_snake = init_game()
 
     while running:  # основной цикл игры
         # получаем все события, зарегистрированные в игре
@@ -109,8 +128,13 @@ if __name__ == "__main__":
                 running = False
             # если регистрируем событие нажатой клавиши
             elif event.type == pygame.KEYDOWN:
+                # если игра закончена и нажали c перезапускаем игру
+                if game_over and event.key == pygame.K_c:
+                    game_over, x0, y0, x0_change, y0_change, x0_change_old, \
+                        y0_change_old, foodx, foody, rock_list, \
+                        snake_list, length_snake = init_game()
                 # если нажата клавиша стрелочка влево
-                if event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT:
                     # обновляем значения на сколько и куда надо сместить голову змеи
                     x0_change = -snake_block
                     y0_change = 0
