@@ -15,6 +15,7 @@ GRAY = (120, 120, 120)
 
 x0, y0 = W//2, H//2  # начальные положение головы змеи
 x0_change, y0_change = 0, 0  # начальные сдвиг змеи
+x0_change_old, y0_change_old = 0, 0  # предыдущий сдвиг змеи
 snake_block = 10  # ширина змеи
 
 
@@ -128,6 +129,9 @@ if __name__ == "__main__":
         # то значение смещений остается и змея продолжает двигаться
         # в сторону последнего заданного направления
         if not game_over:
+            if length_snake > 1:
+                if x0_change == -x0_change_old and y0_change == -y0_change_old:
+                    x0_change, y0_change = x0_change_old, y0_change_old
             x0 += x0_change
             y0 += y0_change
 
@@ -183,6 +187,7 @@ if __name__ == "__main__":
                 # увеличиваем должную длинну змеи на 1
                 length_snake += 1
 
+        x0_change_old, y0_change_old = x0_change, y0_change
         # если выполнили все слишком быстро ждем пока закончится время одного тика
         clock.tick(FPS)
 
