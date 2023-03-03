@@ -3,12 +3,14 @@ import random
 
 W, H = 800, 600  # ширина и высота окна
 FPS = 30  # количестко обработок в секунду (кадров)
+count_rock = 3 # количество камней
 
 # цвета в rgb
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+GRAY = (120, 120, 120)
 
 
 x0, y0 = W//2, H//2  # начальные положение головы змеи
@@ -47,7 +49,28 @@ def draw_snake(snake_list):
         # и рисуем прямоугольники на месте элементов
         pygame.draw.rect(screen, RED, (el[0], el[1], snake_block, snake_block))
 
+
+def draw_rock(rock_list):
+    """
+    Отрисовка камней
+    :param snake_list:
+    :return:
+    """
+    for el in rock_list:  # идем по всем элементам змеи
+        # и рисуем прямоугольники на месте элементов
+        pygame.draw.rect(screen, GRAY, (el[0], el[1], snake_block, snake_block))
+
+
 def generate_food():
+    """
+    Генерируем координаты еды
+    :return:
+    """
+    x = round(random.randrange(0, W - snake_block) / snake_block) * snake_block
+    y = round(random.randrange(0, H - snake_block)/snake_block) * snake_block
+    return x, y
+
+def generate_rock():
     """
     Генерируем координаты еды
     :return:
@@ -69,6 +92,9 @@ if __name__ == "__main__":
     font_style = pygame.font.SysFont(None, 50)  # получаем объект стиль-текста
 
     foodx, foody = generate_food()  # генерируем начальное положение еды
+    rock_list = []  # список камней
+    for i in range(count_rock):
+        rock_list.append(generate_rock())
 
     snake_list = []  # список частей змейки
     length_snake = 1  # какой длинны должна быть змейка
@@ -123,6 +149,10 @@ if __name__ == "__main__":
             # то игра заканчивается
             game_over = True
 
+        # если змея столкнулась со скалами
+        if (x0, y0) in rock_list:
+            game_over = True
+
         # заполняем область окна белым цветом
         screen.fill(WHITE)
 
@@ -138,6 +168,8 @@ if __name__ == "__main__":
         draw_snake(snake_list)
         # рисуем еду
         pygame.draw.rect(screen, GREEN, [foodx, foody, snake_block, snake_block])
+        # рисуем камни
+        draw_rock(rock_list)
 
         # отображаем на экране то, что нарисовали
         pygame.display.update()
