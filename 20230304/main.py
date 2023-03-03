@@ -44,7 +44,7 @@ def draw_snake(snake_list):
     """
     for el in snake_list:  # идем по всем элементам змеи
         # и рисуем прямоугольники на месте элементов
-        pygame.draw.rect(screen, RED, (el[0], el[1], snake_block, snake_block))
+        pygame.draw.rect(screen, RED, (el.x, el.y, snake_block, snake_block))
 
 
 def draw_rock(rock_list):
@@ -55,51 +55,61 @@ def draw_rock(rock_list):
     """
     for el in rock_list:  # идем по всем элементам змеи
         # и рисуем прямоугольники на месте элементов
-        pygame.draw.rect(screen, GRAY, (el[0], el[1], snake_block, snake_block))
+        pygame.draw.rect(screen, GRAY, (el.x, el.y, snake_block, snake_block))
 
 
-def generate_food():
-    """
-    Генерируем координаты еды
-    :return:
-    """
-    x = round(random.randrange(0, W - snake_block) / snake_block) * snake_block
-    y = round(random.randrange(0, H - snake_block)/snake_block) * snake_block
-    return x, y
+class Point:
+    def __init__(self,  x, y):
+        self.x = x
+        self.y = y
 
+    def __add__(self, other):
+        return Point(self.x + other.x, self.y + other.y)
 
-def generate_rock():
-    """
-    Генерируем координаты еды
-    :return:
-    """
-    x = round(random.randrange(0, W - snake_block) / snake_block) * snake_block
-    y = round(random.randrange(0, H - snake_block)/snake_block) * snake_block
-    return x, y
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __neg__(self):
+        return Point(-self.x, -self.y)
 
 
 class Game:
     def __init__(self):
         self.game_over = False  # проиграли или нет
         # начальные положение головы змеи
-        self.x0 = W // 2
-        self.y0 = H // 2
+        self.head = Point(W // 2, H // 2)
         # начальные сдвиг змеи
-        self.x0_change = 0
-        self.y0_change = 0
+        self.head_change = Point(0, 0)
         # предыдущий сдвиг змеи
-        self.x0_change_old = 0
-        self.y0_change_old = 0
+        self.head_change_old = Point(0, 0)
         # генерируем начальное положение еды
-        self.foodx, self.foody = generate_food()
+        self.food = self.generate_food()
         # список камней
-        self.rock_list = []
-        for i in range(count_rock):
-            self.rock_list.append(generate_rock())
+        self.rock_list = self.generate_rock()
         # список частей змейки
         self.snake_list = []
         # какой длинны должна быть змейка
         self.length_snake = 1
+
+    def generate_rock(self):
+        """
+        Генерируем координаты еды
+        """
+        a = []
+        for i in range(count_rock):
+            x = round(random.randrange(0, W - snake_block) / snake_block) * snake_block
+            y = round(random.randrange(0, H - snake_block)/snake_block) * snake_block
+            a.append(Point(x, y))
+        return a
+
+    def generate_food(self):
+        """
+        Генерируем координаты еды
+        :return:
+        """
+        x = round(random.randrange(0, W - snake_block) / snake_block) * snake_block
+        y = round(random.randrange(0, H - snake_block)/snake_block) * snake_block
+        return Point(x, y)
 
 
 if __name__ == "__main__":
@@ -128,17 +138,14 @@ if __name__ == "__main__":
                 # если нажата клавиша стрелочка влево
                 elif event.key == pygame.K_LEFT:
                     # обновляем значения на сколько и куда надо сместить голову змеи
-                    game.x0_change = -snake_block
-                    game.y0_change = 0
+                    game.head_change = Point(-snake_block, 0)
                 elif event.key == pygame.K_RIGHT:
-                    game.x0_change = snake_block
-                    game.y0_change = 0
+                    game.head_change = Point(snake_block, 0)
                 elif event.key == pygame.K_UP:
-                    game.x0_change = 0
-                    game.y0_change = -snake_block
+                    game.head_change = Point(0, -snake_block)
                 elif event.key == pygame.K_DOWN:
-                    game.x0_change = 0
-                    game.y0_change = snake_block
+                    game.head_change = Point(0, snake_block)
+
         # вычислили куда надо сместиться теперь смещаем
         # и запоминаем где должна быть голова змеи
         # обратите внимание, что если пользователь ничего не нажимает
@@ -146,13 +153,13 @@ if __name__ == "__main__":
         # в сторону последнего заданного направления
         if not game.game_over:
             if game.length_snake > 1:
-                if game.x0_change == -game.x0_change_old and game.y0_change == -game.y0_change_old:
-                    game.x0_change, game.y0_change = game.x0_change_old, game.y0_change_old
-            game.x0 += game.x0_change
-            game.y0 += game.y0_change
+                if game.head_change == -game.head_change_old:
+                    game.head_change = game.head_change_old
+
+            game.head += game.head_change
 
             # добавляем новый элемент змеи в конец списка
-            game.snake_list.append((game.x0, game.y0))
+            game.snake_list.append(game.head)
 
             # если длинна списка элементов больше чем должно быть у змеи
             if len(game.snake_list) > game.length_snake:
@@ -166,12 +173,12 @@ if __name__ == "__main__":
                 game.game_over = True
 
         # если змея вышла за границы поля
-        if game.x0 >= W or game.x0 < 0 or game.y0 >= H or game.y0 < 0:
+        if game.head.x >= W or game.head.x < 0 or game.head.y >= H or game.head.y < 0:
             # то игра заканчивается
             game.game_over = True
 
         # если змея столкнулась со скалами
-        if (game.x0, game.y0) in game.rock_list:
+        if game.head in game.rock_list:
             game.game_over = True
 
         # заполняем область окна белым цветом
@@ -188,7 +195,7 @@ if __name__ == "__main__":
         # рисуем змею в текущих координатах ее частей
         draw_snake(game.snake_list)
         # рисуем еду
-        pygame.draw.rect(screen, GREEN, [game.foodx, game.foody, snake_block, snake_block])
+        pygame.draw.rect(screen, GREEN, (game.food.x, game.food.y, snake_block, snake_block))
         # рисуем камни
         draw_rock(game.rock_list)
 
@@ -197,13 +204,13 @@ if __name__ == "__main__":
 
         if not game.game_over:
             # если голова змеи оказалась в той же клетке, что еда
-            if (game.x0, game.y0) == (game.foodx, game.foody):
+            if game.head == game.food:
                 # генерируем новую позицию еды
-                game.foodx, game.foody = generate_food()
+                game.food = game.generate_food()
                 # увеличиваем должную длинну змеи на 1
                 game.length_snake += 1
 
-        game.x0_change_old, game.y0_change_old = game.x0_change, game.y0_change
+        game.head_change_old = game.head_change
         # если выполнили все слишком быстро ждем пока закончится время одного тика
         clock.tick(FPS)
 
