@@ -2,7 +2,7 @@ import pygame
 import random
 
 W, H = 800, 600  # ширина и высота окна
-FPS = 30  # количестко обработок в секунду (кадров)
+FPS = 30  # количество обработок в секунду (кадров)
 count_rock = 3 # количество камней
 snake_block = 10  # ширина змеи
 
@@ -78,33 +78,29 @@ def generate_rock():
     return x, y
 
 
-def init_game():
-    game_over = False  # проиграли или нет
-    x0, y0 = W // 2, H // 2  # начальные положение головы змеи
-    x0_change, y0_change = 0, 0  # начальные сдвиг змеи
-    x0_change_old, y0_change_old = 0, 0  # предыдущий сдвиг змеи
+class Game:
+    def __init__(self):
+        self.game_over = False  # проиграли или нет
+        # начальные положение головы змеи
+        self.x0 = W // 2
+        self.y0 = H // 2
+        # начальные сдвиг змеи
+        self.x0_change = 0
+        self.y0_change = 0
+        # предыдущий сдвиг змеи
+        self.x0_change_old = 0
+        self.y0_change_old = 0
+        # генерируем начальное положение еды
+        self.foodx, self.foody = generate_food()
+        # список камней
+        self.rock_list = []
+        for i in range(count_rock):
+            self.rock_list.append(generate_rock())
+        # список частей змейки
+        self.snake_list = []
+        # какой длинны должна быть змейка
+        self.length_snake = 1
 
-    foodx, foody = generate_food()  # генерируем начальное положение еды
-    rock_list = []  # список камней
-    for i in range(count_rock):
-        rock_list.append(generate_rock())
-
-    snake_list = []  # список частей змейки
-    length_snake = 1  # какой длинны должна быть змейка
-    return (
-        game_over,
-        x0,
-        y0,
-        x0_change,
-        y0_change,
-        x0_change_old,
-        y0_change_old,
-        foodx,
-        foody,
-        rock_list,
-        snake_list,
-        length_snake,
-    )
 
 if __name__ == "__main__":
     pygame.init()  # инициализируем модуль pygame
@@ -115,9 +111,7 @@ if __name__ == "__main__":
     font_style = pygame.font.SysFont(None, 50)  # получаем объект стиль-текста
 
     running = True  # истина пока продолжается игра
-    game_over, x0, y0, x0_change, y0_change, x0_change_old, \
-            y0_change_old, foodx, foody, rock_list, \
-                snake_list, length_snake = init_game()
+    game = Game()
 
     while running:  # основной цикл игры
         # получаем все события, зарегистрированные в игре
@@ -129,89 +123,87 @@ if __name__ == "__main__":
             # если регистрируем событие нажатой клавиши
             elif event.type == pygame.KEYDOWN:
                 # если игра закончена и нажали c перезапускаем игру
-                if game_over and event.key == pygame.K_c:
-                    game_over, x0, y0, x0_change, y0_change, x0_change_old, \
-                        y0_change_old, foodx, foody, rock_list, \
-                        snake_list, length_snake = init_game()
+                if game.game_over and event.key == pygame.K_c:
+                    game = Game()
                 # если нажата клавиша стрелочка влево
                 elif event.key == pygame.K_LEFT:
                     # обновляем значения на сколько и куда надо сместить голову змеи
-                    x0_change = -snake_block
-                    y0_change = 0
+                    game.x0_change = -snake_block
+                    game.y0_change = 0
                 elif event.key == pygame.K_RIGHT:
-                    x0_change = snake_block
-                    y0_change = 0
+                    game.x0_change = snake_block
+                    game.y0_change = 0
                 elif event.key == pygame.K_UP:
-                    x0_change = 0
-                    y0_change = -snake_block
+                    game.x0_change = 0
+                    game.y0_change = -snake_block
                 elif event.key == pygame.K_DOWN:
-                    x0_change = 0
-                    y0_change = snake_block
+                    game.x0_change = 0
+                    game.y0_change = snake_block
         # вычислили куда надо сместиться теперь смещаем
         # и запоминаем где должна быть голова змеи
         # обратите внимание, что если пользователь ничего не нажимает
         # то значение смещений остается и змея продолжает двигаться
         # в сторону последнего заданного направления
-        if not game_over:
-            if length_snake > 1:
-                if x0_change == -x0_change_old and y0_change == -y0_change_old:
-                    x0_change, y0_change = x0_change_old, y0_change_old
-            x0 += x0_change
-            y0 += y0_change
+        if not game.game_over:
+            if game.length_snake > 1:
+                if game.x0_change == -game.x0_change_old and game.y0_change == -game.y0_change_old:
+                    game.x0_change, game.y0_change = game.x0_change_old, game.y0_change_old
+            game.x0 += game.x0_change
+            game.y0 += game.y0_change
 
             # добавляем новый элемент змеи в конец списка
-            snake_list.append((x0, y0))
+            game.snake_list.append((game.x0, game.y0))
 
             # если длинна списка элементов больше чем должно быть у змеи
-            if len(snake_list) > length_snake:
+            if len(game.snake_list) > game.length_snake:
                 # удаляем первый элемент списка (хвост змеи)
-                snake_list.pop(0)
+                game.snake_list.pop(0)
 
         # если змея столкнулась сама с собой
-        for el in snake_list[:-1]:
-            if el == snake_list[-1]:
+        for el in game.snake_list[:-1]:
+            if el == game.snake_list[-1]:
                 # то игра заканчивается
-                game_over = True
+                game.game_over = True
 
         # если змея вышла за границы поля
-        if x0 >= W or x0 < 0 or y0 >= H or y0 < 0:
+        if game.x0 >= W or game.x0 < 0 or game.y0 >= H or game.y0 < 0:
             # то игра заканчивается
-            game_over = True
+            game.game_over = True
 
         # если змея столкнулась со скалами
-        if (x0, y0) in rock_list:
-            game_over = True
+        if (game.x0, game.y0) in game.rock_list:
+            game.game_over = True
 
         # заполняем область окна белым цветом
         screen.fill(WHITE)
 
         # если игра закончилась
-        if game_over:
+        if game.game_over:
             # рисуем в цетре экрана - вы проиграли
             message("Вы проиграли", GREEN)
 
         # выводим сколько съели
-        message_count_eat(f"Съели: {length_snake-1}")
+        message_count_eat(f"Съели: {game.length_snake-1}")
 
         # рисуем змею в текущих координатах ее частей
-        draw_snake(snake_list)
+        draw_snake(game.snake_list)
         # рисуем еду
-        pygame.draw.rect(screen, GREEN, [foodx, foody, snake_block, snake_block])
+        pygame.draw.rect(screen, GREEN, [game.foodx, game.foody, snake_block, snake_block])
         # рисуем камни
-        draw_rock(rock_list)
+        draw_rock(game.rock_list)
 
         # отображаем на экране то, что нарисовали
         pygame.display.update()
 
-        if not game_over:
+        if not game.game_over:
             # если голова змеи оказалась в той же клетке, что еда
-            if (x0, y0) == (foodx, foody):
+            if (game.x0, game.y0) == (game.foodx, game.foody):
                 # генерируем новую позицию еды
-                foodx, foody = generate_food()
+                game.foodx, game.foody = generate_food()
                 # увеличиваем должную длинну змеи на 1
-                length_snake += 1
+                game.length_snake += 1
 
-        x0_change_old, y0_change_old = x0_change, y0_change
+        game.x0_change_old, game.y0_change_old = game.x0_change, game.y0_change
         # если выполнили все слишком быстро ждем пока закончится время одного тика
         clock.tick(FPS)
 
