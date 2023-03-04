@@ -1,5 +1,9 @@
 import random
 import pygame
+import logging
+
+logging.basicConfig(level=logging.INFO, filename="snake.log",filemode="w",
+                    format="%(asctime)s %(filename)s %(levelname)s %(funcName)s %(lineno)d %(message)s")
 
 
 W, H = 800, 600  # ширина и высота окна
@@ -77,9 +81,13 @@ class Point:
     def __neg__(self):
         return Point(-self.x, -self.y)
 
+    def __repr__(self):
+        return f"({self.x},{self.y})"
+
 
 class Game:
     def __init__(self):
+        self.power = 100
         self.game_over = False  # проиграли или нет
         # начальные положение головы змеи
         self.head = Point(W // 2, H // 2)
@@ -118,6 +126,7 @@ class Game:
         # если мы еще в игре
         # и если голова змеи оказалась в той же клетке, что еда
         if not self.game_over and self.head == self.food:
+            self.power += 100
             # генерируем новую позицию еды
             self.new_food()
             # увеличиваем должную длинну змеи на 1
@@ -160,25 +169,35 @@ class Game:
             if len(self.snake_list) > self.length_snake:
                 # удаляем первый элемент списка (хвост змеи)
                 self.snake_list.pop(0)
+        logging.info(f"{self.snake_list}")
 
     def snake_left(self):
+        self.power -= 1
         self.head_change = Point(-snake_block, 0)
 
     def snake_right(self):
+        self.power -= 1
         self.head_change = Point(snake_block, 0)
 
     def snake_up(self):
+        self.power -= 1
         self.head_change = Point(0, -snake_block)
 
     def snake_down(self):
+        self.power -= 1
         self.head_change = Point(0, snake_block)
 
     def last_do(self):
         self.head_change_old = self.head_change
 
 
+def do(game):
+    pass
+
+
 
 if __name__ == "__main__":
+    logging.info(f"{W=} {H=} {count_rock=} {FPS + 100=} {snake_block=}")
     pygame.init()  # инициализируем модуль pygame
 
     screen = pygame.display.set_mode((W, H))  # получаем объект cодержимого окна с ширной W и высотой H
@@ -201,16 +220,17 @@ if __name__ == "__main__":
                 # если игра закончена и нажали c перезапускаем игру
                 if game.game_over and event.key == pygame.K_c:
                     game = Game()
-                # если нажата клавиша стрелочка влево
-                elif event.key == pygame.K_LEFT:
-                    # обновляем значения на сколько и куда надо сместить голову змеи
-                    game.snake_left()
-                elif event.key == pygame.K_RIGHT:
-                    game.snake_right()
-                elif event.key == pygame.K_UP:
-                    game.snake_up()
-                elif event.key == pygame.K_DOWN:
-                    game.snake_down()
+        do(game)
+                # # если нажата клавиша стрелочка влево
+                # elif event.key == pygame.K_LEFT:
+                #     # обновляем значения на сколько и куда надо сместить голову змеи
+                #     game.snake_left()
+                # elif event.key == pygame.K_RIGHT:
+                #     game.snake_right()
+                # elif event.key == pygame.K_UP:
+                #     game.snake_up()
+                # elif event.key == pygame.K_DOWN:
+                #     game.snake_down()
 
         # логика действий перед отрисовкой ------
         # шагаем змеей
