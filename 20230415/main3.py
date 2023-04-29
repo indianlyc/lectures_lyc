@@ -16,7 +16,7 @@ r = 5
 g = 10
 dt = 1
 
-n = 100000
+n = 100
 xs = np.random.random((n,)) * WIDTH
 ys = np.random.random((n,)) * HEIGHT
 vys = np.random.random((n,))
