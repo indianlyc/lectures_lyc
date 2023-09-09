@@ -8,14 +8,29 @@ img {
   /* background-color: powderblue; */
 }
 
-div {
+#base_text {
   /* height: 200px; */
   position: absolute;
   left: 500px;
   width: 800px;
-  display: block;
   padding: 20px;
   border: solid 1px salmon;
   font-size: 40px;
   /* background-color: powderblue; */
+}
+
+.dog {
+    display: inline;
+    border: solid 1px green;
+}
+
+#u44 {
+    position: static;
+    display: block;
+    left: 0px;
+    background-color: salmon;
+}
+
+.u div {
+    display: none;
 }
