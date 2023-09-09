@@ -1,0 +1,21 @@
+img {
+  /* height: 200px; */
+  width: 400px;
+  display: block;
+  padding: 20px;
+  margin: 10px;
+  border: solid 1px salmon;
+  /* background-color: powderblue; */
+}
+
+div {
+  /* height: 200px; */
+  position: absolute;
+  left: 500px;
+  width: 800px;
+  display: block;
+  padding: 20px;
+  border: solid 1px salmon;
+  font-size: 40px;
+  /* background-color: powderblue; */
+}
