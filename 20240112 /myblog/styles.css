@@ -1,0 +1,33 @@
+/*
+* {
+    border: 1px solid pink;
+}
+*/
+
+h1,header {
+    text-align: center;
+}
+
+/*
+.base-column {
+    text-align: center;
+}
+*/
+
+nav {
+  float: left;
+  width: 25%;
+}
+
+
+article {
+  float: left;
+  width: 65%;
+}
+
+section::after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
