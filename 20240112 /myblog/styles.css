@@ -4,6 +4,10 @@
 }
 */
 
+* {
+    font-size: 50px;
+}
+
 h1,header {
     text-align: center;
 }
