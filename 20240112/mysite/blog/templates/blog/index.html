@@ -1,18 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-{% if latest_post_list %}
-    <ul>
-    {% for post in latest_post_list %}
-        <li><a href="/{{ post.id }}/">{{ post.title }}</a></li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>Пока еще нет постов</p>
-{% endif %}
-</body>
-</html>
+{% extends "blog/base.html" %}
+
+{% block title %}Мой блог{% endblock %}
+
+{% block body %}
+    {% if latest_post_list %}
+        <ul>
+        {% for post in latest_post_list %}
+            <li><a href="{% url 'detail' post.id %}">{{ post.title }}</a></li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Пока еще нет постов</p>
+    {% endif %}
+
+    <div>
+        {% block content %}
+        {% endblock %}
+    </div>
+{% endblock %}
+
