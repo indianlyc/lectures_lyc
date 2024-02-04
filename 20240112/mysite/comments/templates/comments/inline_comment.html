@@ -1,0 +1,10 @@
+<ul>
+{% for comment in comments %}
+<li>[{{ comment.datetime }}] {{ comment.username }}: {{ comment.text }}</li>
+{% endfor %}
+</ul>
+<form method="post">
+        {% csrf_token %}
+        {{ form }}
+        <input type="submit" value="Отправить">
+</form>

@@ -7,7 +7,7 @@
 <body>
     <ul>
         {% for comment in comments %}
-        <li>{{ comment.username }}: {{ comment.text }}</li>
+        <li>{{ comment.post.title }} <- {{ comment.username }}: {{ comment.text }}</li>
         {% endfor %}
     </ul>
     <form method="post">

@@ -4,4 +4,5 @@
 {% block content %}
 <h1>{{ post.title }}</h1>
 <p>{{ post.text }}</p>
+{% include "comments/inline_comment.html" %}
 {% endblock %}
