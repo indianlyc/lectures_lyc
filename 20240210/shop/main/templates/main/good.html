@@ -1,0 +1,12 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ good.category}} - {{ good.title }}{% endblock %}
+
+{% block content %}
+<ul>
+    <li>{{ good.title }}</li>
+    <li>{{ good.description }}</li>
+    <li>Цена: {{ good.price }}</li>
+    <li>Категория: {{ good.category }}</li>
+</ul>
+{% endblock %}

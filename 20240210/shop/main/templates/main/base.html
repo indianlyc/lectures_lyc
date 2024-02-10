@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Shop - {%  block title %}{% endblock %}</title>
+</head>
+<body>
+<h1>Поиск</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form }}
+    <input type="submit" value="Поиск">
+</form>
+<h1>Категории</h1>
+<ul>
+    {% for category in list_categories %}
+    <li><a href="{% url 'category' category.id %}">{{ category.title }}</a></li>
+    {% endfor %}
+</ul>
+<h1>Товары</h1>
+{% block content %}{% endblock %}
+</body>
+</html>

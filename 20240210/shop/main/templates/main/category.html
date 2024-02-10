@@ -1,0 +1,11 @@
+{% extends 'main/base.html' %}
+
+{% block title %}{{ category.title }}{% endblock %}
+
+{% block content %}
+<ul>
+    {% for good in list_goods %}
+        {% include 'main/block_good.html' %}
+    {% endfor %}
+</ul>
+{% endblock %}
