@@ -1,0 +1,21 @@
+img  {
+    width: 100px;
+}
+
+.good {
+    width: 200px;
+    margin: 20px;
+}
+
+.price slug{
+    color: #0060ffb5;
+}
+
+.good div {
+    padding: 10px;
+}
+
+
+div {
+    border:  1px solid black;
+}

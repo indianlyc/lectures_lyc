@@ -107,9 +107,10 @@ class GoodView(MainView):
 
     def get_base_context(self, request, *args, **kwargs):
         context = super().get_base_context(request, *args, **kwargs)
+        good = Good.objects.get(id=kwargs["good_id"])
         context.update(
             {
-                "good": Good.objects.get(id=kwargs["good_id"])
+                "good": good,
             }
         )
         return context
