@@ -1,0 +1,6 @@
+<div class="good">
+    <div><a href="{% url 'good' good.id %}">{{ good.title|capfirst }}</a></div>
+    <div><img src="{{ good.img.url }}"></div>
+    <div class="good-description">{{ good.description|truncatechars:100 }}</div>
+    <div class="price">Цена: <slug>{{ good.price|floatformat }}</slug> рублей</div>
+</div>

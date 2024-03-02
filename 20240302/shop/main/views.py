@@ -13,7 +13,7 @@ class MainView(View):
         list_categories = Category.objects.all()
         cart_goods = Good.objects.filter(id__in=request.session.get("cart", []))
         context = {
-            'list_goods': kwargs['list_goods'],
+            # 'list_goods': kwargs['list_goods'],
             "list_categories": list_categories,
             'form': kwargs['form'],
             'cart_goods': cart_goods,
