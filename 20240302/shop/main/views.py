@@ -1,10 +1,30 @@
+import json
+
 from django.shortcuts import render, redirect
 from django.views import View
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse
+from django.db.models import Q
+
 
 from .models import Good, Category
 from .forms import SearchForm
+
+
+def search(request, category_id, query):
+    print(category_id, query)
+    if category_id == 10000:
+        list_goods = Good.objects.all()
+    else:
+        list_goods = Good.objects.filter(category_id=category_id)
+
+    if query != "None":
+        list_goods =  list_goods.filter(Q(title__icontains=query) | Q(description__icontains=query))
+    # r = []
+    return HttpResponse(json.dumps(list(list_goods.values())),
+                        content_type="application/json")
+    # return HttpResponse(json.dumps([el.title for el in list_goods]),
+    #                     content_type="application/json")
 
 
 class MainView(View):

@@ -24,7 +24,7 @@ from django.views.generic.base import RedirectView
 from . import settings
 
 
-from main.views import MainView, CategoryView, GoodView, add_to_cart
+from main.views import MainView, CategoryView, GoodView, add_to_cart, search
 
 urlpatterns = [
     path('', MainView.as_view(), name="main"),
@@ -37,6 +37,7 @@ urlpatterns = [
 
 
     path('api/add_to_cart/<int:good_id>', add_to_cart, name="add_to_cart"),
+    path('api/search/<int:category_id>/<str:query>', search, name="search"),
 ]
 
 if settings.DEBUG:

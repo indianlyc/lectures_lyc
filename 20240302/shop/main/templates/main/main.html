@@ -3,9 +3,9 @@
 {% block title %}Главная страница{% endblock %}
 
 {% block content %}
-<ul>
+<div class="good-list">
     {% for good in list_goods %}
         {% include 'main/block_good.html' %}
     {% endfor %}
-</ul>
+</div>
 {% endblock %}

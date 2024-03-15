@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="{% static 'main/main.css' %}">
+    <script type="text/javascript" src="{% static 'main/main.js' %}"></script>
     <title>Shop - {%  block title %}{% endblock %}</title>
 </head>
 <body>
@@ -13,10 +14,10 @@
     {% for good in cart_goods %}{{ good.id }},{% endfor %}
 </div>
 <h1>Поиск</h1>
-<form method="post">
+<form method="post" id="search-form">
     {% csrf_token %}
     {{ form }}
-    <input type="submit" value="Поиск">
+    <input id="search-button" type="submit" value="Поиск">
 </form>
 <h1>Категории</h1>
 <ul>
